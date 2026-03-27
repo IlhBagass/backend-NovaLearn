@@ -17,13 +17,20 @@ export const addCoourse = async(request,reply)=>{
 }
 
 export const showCourse = async(request,reply) => {
-    const AllData = await service.showCourse();
+    try{
+        const AllData = await service.showCourse();
 
-    return reply.code(201).send({
-        status : "success",
-        total : AllData.length,
-        data : AllData
-    })
+        return reply.code(200).send({
+            status : "success",
+            total : AllData.length,
+            data : AllData
+        })
+    }catch(error){
+        return reply.code(500).send({
+            status: "error",
+            message: error.message
+        });
+    }
 }
 
 export const deleteCourse = async(request,reply) => {
@@ -60,7 +67,7 @@ export const showOnly = async(request,reply) => {
             })
         }
 
-        return reply.code(201).send({
+        return reply.code(200).send({
             status : "success",
             data : data
         })

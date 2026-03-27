@@ -17,7 +17,7 @@ export const createCourse = async (name_course,description,thumbnail,kelas) => {
     name_course,
     description,
     kelas,
-    thumbnail) VALUES (${newId},${name_course},${description},${thumbnail},${kelas})
+    thumbnail) VALUES (${newId},${name_course},${description},${kelas},${thumbnail})
     RETURNING id,name_course,description,thumbnail,kelas
     `;
 
@@ -57,7 +57,7 @@ export const updateCourse = async(id,dataBaru) => {
     SET
         name_course = ${name_course},
         description = ${description},
-        thumbnail = ${thumbnail}
+        thumbnail = ${thumbnail},
         kelas = ${kelas}
     WHERE id = ${id}
     RETURNING id,name_course,description,thumbnail,kelas`
