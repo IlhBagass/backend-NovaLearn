@@ -9,4 +9,6 @@ app.get("/",async () => {
     return { message: "API berhasil" };
 });
 
+await app.ready();
+
 export default app;
