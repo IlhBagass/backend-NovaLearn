@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { sql } from '../../../config/db.js';
 
-export const createCourse = async (name_course,description,thumbnail) => {
+export const createCourse = async (name_course,description,thumbnail,kelas) => {
 
     const exsistingCourse = await sql`SELECT * FROM course WHERE name_course = ${name_course}`
 
@@ -16,8 +16,9 @@ export const createCourse = async (name_course,description,thumbnail) => {
     id,
     name_course,
     description,
-    thumbnail) VALUES (${newId},${name_course},${description},${thumbnail})
-    RETURNING id,name_course,description,thumbnail
+    kelas,
+    thumbnail) VALUES (${newId},${name_course},${description},${thumbnail},${kelas})
+    RETURNING id,name_course,description,thumbnail,kelas
     `;
 
     return result[0];
@@ -49,7 +50,7 @@ export const showOnly = async(name_course) =>{
 }
 
 export const updateCourse = async(id,dataBaru) => {
-    const { name_course, description, thumbnail } = dataBaru;
+    const { name_course, description, thumbnail,kelas } = dataBaru;
 
     const result = await sql`
     UPDATE course
@@ -57,8 +58,9 @@ export const updateCourse = async(id,dataBaru) => {
         name_course = ${name_course},
         description = ${description},
         thumbnail = ${thumbnail}
+        kelas = ${kelas}
     WHERE id = ${id}
-    RETURNING id,name_course,description,thumbnail`
+    RETURNING id,name_course,description,thumbnail,kelas`
     
     return result.length > 0 ? result[0] : null;
 };

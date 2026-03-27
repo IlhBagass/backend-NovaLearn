@@ -1,4 +1,4 @@
-import * as controller from "./controllers/auth.controllers.js";
+import * as controller from "./controllers/auth.controller.js";
 
 export default async function (app) {
 

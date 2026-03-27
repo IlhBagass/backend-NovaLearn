@@ -2,9 +2,9 @@ import * as service from "../services/course.service.js"
 
 export const addCoourse = async(request,reply)=>{
     try{
-        const {name_course,description,thumbnail} = request.body;
+        const {name_course,description,thumbnail,kelas} = request.body;
 
-        const dataCourse = await service.createCourse(name_course,description,thumbnail);
+        const dataCourse = await service.createCourse(name_course,description,thumbnail,kelas);
 
         return reply.code(201).send({
             status : "success",

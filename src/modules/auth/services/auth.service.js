@@ -4,11 +4,15 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sql } from '../../../config/db.js'; // Mengambil jembatan koneksi Neon DB
 
-export const registerUser = async (student_id, name, password, kelas, major, years, valid_thru, role) => {
+export const registerUser = async (student_id,admin_id,email ,name, password, kelas, major, years, valid_thru, role) => {
   // 1. Cek NIM
-  const existingUser = await sql`SELECT * FROM users WHERE student_id = ${student_id}`;
+  const existingUser = await sql`SELECT * FROM "User" WHERE student_id = ${student_id}`;
   if (existingUser.length > 0) {
     throw new Error('NIM ini sudah terdaftar di dalam sistem kami!');
+  }
+
+  if (!password || typeof password !== "string") {
+    throw new Error("Password tidak valid / kosong");
   }
 
   // 2. Hash password
@@ -16,15 +20,15 @@ export const registerUser = async (student_id, name, password, kelas, major, yea
 
   // 3. Generate ID unik
   const newId = crypto.randomBytes(5).toString('hex');
-
+  
   const result = await sql`
-    INSERT INTO users (
-      id, student_id, name, password, kelas, major, years, valid_thru, role
+    INSERT INTO "User" (
+      id, student_id,admin_id , email, name, password, kelas, major, years, valid_thru, role
     )
     VALUES (
-      ${newId}, ${student_id}, ${name}, ${hashedPassword}, ${kelas}, ${major}, ${years}, ${valid_thru}, ${role}
+      ${newId}, ${student_id},${admin_id} , ${email}, ${name}, ${hashedPassword}, ${kelas}, ${major}, ${years}, ${valid_thru}, ${role}
     )
-    RETURNING id, student_id, name, kelas, major, years, valid_thru, role
+    RETURNING id, student_id,admin_id , email, name, kelas, major, years, valid_thru, role
   `;
 
   return result[0];
@@ -34,7 +38,7 @@ export const showUser = async (student_id) => {
   // Hanya ambil kolom yang diperlukan (Tanpa Password)
   const result = await sql`
     SELECT id, student_id, name, kelas, major, years, valid_thru, role 
-    FROM users 
+    FROM "User" 
     WHERE student_id = ${student_id}
   `;
   
@@ -45,8 +49,8 @@ export const showUser = async (student_id) => {
 export const showAllUser = async () =>{
    const result = await sql `
    SELECT id, student_id, name, kelas, major, valid_thru, role
-   FROM users
-   ORDER BY created_at DESC`
+   FROM "User"
+   ORDER BY "createdAt" DESC`
    
    return result
 }
@@ -54,7 +58,7 @@ export const showAllUser = async () =>{
 export const deleteUser = async (student_id) => {
   // Gunakan RETURNING agar data yang dihapus bisa ditampilkan di respon
   const result = await sql`
-    DELETE FROM users 
+    DELETE FROM "User"
     WHERE student_id = ${student_id}
     RETURNING id, student_id, name
   `;
@@ -65,7 +69,7 @@ export const deleteUser = async (student_id) => {
 
 export const loginUser = async (student_id, password) => {
   // 1. Cari user berdasarkan student_id
-  const users = await sql`SELECT * FROM users WHERE student_id = ${student_id}`;
+  const users = await sql`SELECT * FROM "User" WHERE student_id = ${student_id}`;
   if (users.length === 0) throw new Error('NIM tidak ditemukan!');
 
   const user = users[0];
@@ -94,7 +98,7 @@ export const loginUser = async (student_id, password) => {
 export const updateUsers = async(student_id,dataBaru) => {
   const {name,kelas,major,years,valid_thru,role} = dataBaru;
 
-  const result = await sql`UPDATE users
+  const result = await sql`UPDATE "User"
   SET 
     name = ${name},
     kelas = ${kelas},

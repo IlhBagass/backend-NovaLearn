@@ -14,10 +14,10 @@ export const login = async (request, reply) => {
 export const register = async (request, reply) => {
   try {
     // Menangkap data dari Postman / Frontend
-    const { student_id, name, password, kelas, major, years, valid_thru, role } = request.body;
+    const { student_id,admin_id, email ,name, password, kelas, major, years, valid_thru, role,updatedAt } = request.body;
     
     // Melempar data ke Service untuk diproses dan disimpan ke Neon DB
-    const dataRegister = await service.registerUser(student_id, name, password, kelas, major, years, valid_thru, role);
+    const dataRegister = await service.registerUser(student_id,admin_id,email ,name, password, kelas, major, years, valid_thru, role, updatedAt);
 
     // Mengembalikan jawaban sukses ke layar
     return reply.code(201).send({

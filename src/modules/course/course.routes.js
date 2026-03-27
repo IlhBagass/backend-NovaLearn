@@ -1,4 +1,4 @@
-import * as controller from "./controllers/course.controllers.js";
+import * as controller from "./controllers/course.controller.js";
 
 export default async function (app) {
     app.post("/add", controller.addCoourse)
