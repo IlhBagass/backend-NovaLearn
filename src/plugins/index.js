@@ -7,17 +7,20 @@ import modulModule from "../modules/modul/index.js";
 import modulQuiz from "../modules/quiz/index.js";
 
 export default async function registerPlugins(app) {
-  await app.register(cors, { origin: "*" });
+  await app.register(cors, {
+    origin: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
 
   await app.register(fastifyMultipart, {
     limits: {
-      fileSize: 5 * 1024 * 1024 // 5MB
-    }
+      fileSize: 5 * 1024 * 1024,
+    },
   });
 
-  // WAJIB ADA INI
-  app.register(authModule, { prefix: "/auth" });
-  app.register(courseModule, {prefix: "/course"})
-  app.register(modulModule, {prefix:"/modul"})
-  app.register(modulQuiz, {prefix: "/quiz"})
+  await app.register(authModule, { prefix: "/auth" });
+  await app.register(courseModule, { prefix: "/course" });
+  await app.register(modulModule, { prefix: "/modul" });
+  await app.register(modulQuiz, { prefix: "/quiz" });
 }
