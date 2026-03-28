@@ -1,3 +1,4 @@
+import "./config/env.js";
 import Fastify from "fastify";
 import registerPlugin from "./plugins/index.js";
 
