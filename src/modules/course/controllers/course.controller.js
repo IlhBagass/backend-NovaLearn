@@ -2,29 +2,40 @@ import * as service from "../services/course.service.js"
 
 import { uploadImageToCloudinary } from "../../../utils/upload.js"; 
 
-export const addCourse = async(request, reply) => {
-    try {
-        const parts = request.parts(); 
-        const body = {};
-        let thumbnailUrl = null;
+const parseCoursePayload = async (request, { thumbnailRequired = false } = {}) => {
+    const body = {};
+    let thumbnailUrl = null;
+
+    if (request.isMultipart()) {
+        const parts = request.parts();
 
         for await (const part of parts) {
             if (part.type === 'file' && part.fieldname === 'thumbnail') {
                 const uploadResult = await uploadImageToCloudinary(part.file);
-                thumbnailUrl = uploadResult.secure_url; 
+                thumbnailUrl = uploadResult.secure_url;
             } else {
                 body[part.fieldname] = part.value;
             }
         }
+    } else {
+        Object.assign(body, request.body);
+        thumbnailUrl = request.body?.thumbnail ?? null;
+    }
+
+    if (thumbnailRequired && !thumbnailUrl) {
+        throw new Error("Thumbnail gambar wajib diupload!");
+    }
+
+    return { body, thumbnailUrl };
+};
+
+export const addCourse = async(request, reply) => {
+    try {
+        const { body, thumbnailUrl } = await parseCoursePayload(request, {
+            thumbnailRequired: true
+        });
 
         const { name_course, description, kelas, teacher } = body;
-
-        if (!thumbnailUrl) {
-            return reply.code(400).send({ 
-                status: "error", 
-                message: "Thumbnail gambar wajib diupload!" 
-            });
-        }
 
         const dataCourse = await service.createCourse(name_course, description, thumbnailUrl, kelas, teacher);
 
@@ -34,6 +45,13 @@ export const addCourse = async(request, reply) => {
             data: dataCourse
         });
     } catch(error) {
+        if (error.message === "Thumbnail gambar wajib diupload!") {
+            return reply.code(400).send({
+                status: "error",
+                message: error.message
+            });
+        }
+
         return reply.code(500).send({ status: "error", message: error.message });
     }
 }
@@ -98,22 +116,33 @@ export const showOnly = async(request,reply) => {
     }
 }
 
-export const update = async(requets,reply) => {
-    const { id } = requets.params
-    const dataBaru = requets.body
-    
-    const newData = await service.updateCourse(id,dataBaru);
+export const update = async(request,reply) => {
+    try {
+        const { id } = request.params;
+        const { body, thumbnailUrl } = await parseCoursePayload(request);
+        const dataBaru = {
+            ...body,
+            ...(thumbnailUrl ? { thumbnail: thumbnailUrl } : {})
+        };
+        
+        const newData = await service.updateCourse(id, dataBaru);
 
-    if (!newData){
-        reply.code(400).send({
-            status : "error",
-            message : "maaf data yang anda masukkan tidak ada"
-        })
+        if (!newData){
+            return reply.code(404).send({
+                status : "error",
+                message : "maaf data yang anda masukkan tidak ada"
+            });
+        }
+
+        return reply.code(200).send({
+            status : "success",
+            message : "berhasil mengubah data",
+            data : newData
+        });
+    } catch (error) {
+        return reply.code(500).send({
+            status: "error",
+            message: error.message
+        });
     }
-
-    reply.code(201).send({
-        status : "success",
-        message : "berhasil menambahkan data",
-        data : newData
-    })
 }
