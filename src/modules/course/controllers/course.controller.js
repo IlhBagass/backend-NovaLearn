@@ -1,18 +1,40 @@
 import * as service from "../services/course.service.js"
 
-export const addCoourse = async(request,reply)=>{
-    try{
-        const {name_course,description,thumbnail,kelas,teacher} = request.body;
+import { uploadImageToCloudinary } from "../../../utils/upload.js"; 
 
-        const dataCourse = await service.createCourse(name_course,description,thumbnail,kelas,teacher);
+export const addCourse = async(request, reply) => {
+    try {
+        const parts = request.parts(); 
+        const body = {};
+        let thumbnailUrl = null;
+
+        for await (const part of parts) {
+            if (part.type === 'file' && part.fieldname === 'thumbnail') {
+                const uploadResult = await uploadImageToCloudinary(part.file);
+                thumbnailUrl = uploadResult.secure_url; 
+            } else {
+                body[part.fieldname] = part.value;
+            }
+        }
+
+        const { name_course, description, kelas, teacher } = body;
+
+        if (!thumbnailUrl) {
+            return reply.code(400).send({ 
+                status: "error", 
+                message: "Thumbnail gambar wajib diupload!" 
+            });
+        }
+
+        const dataCourse = await service.createCourse(name_course, description, thumbnailUrl, kelas, teacher);
 
         return reply.code(201).send({
-            status : "success",
-            message : "berhasil ditambahkan ke database",
-            data : dataCourse
+            status: "success",
+            message: "Berhasil ditambahkan ke database",
+            data: dataCourse
         });
-    }catch(error){
-        return reply.code(401).send({status : "error ",message : error.message})
+    } catch(error) {
+        return reply.code(500).send({ status: "error", message: error.message });
     }
 }
 

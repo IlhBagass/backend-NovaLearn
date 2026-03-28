@@ -1,7 +1,7 @@
 import * as controller from "./controllers/course.controller.js";
 
 export default async function (app) {
-    app.post("/add", controller.addCoourse)
+    app.post("/add", controller.addCourse)
 
     app.get("/show", controller.showCourse)
     app.get("/showonly/:name_course", controller.showOnly)
