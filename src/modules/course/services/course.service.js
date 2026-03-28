@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { sql } from '../../../config/db.js';
 
-export const createCourse = async (name_course,description,thumbnail,kelas) => {
+export const createCourse = async (name_course,description,thumbnail,kelas,teacher) => {
 
     const exsistingCourse = await sql`SELECT * FROM course WHERE name_course = ${name_course}`
 
@@ -17,8 +17,8 @@ export const createCourse = async (name_course,description,thumbnail,kelas) => {
     name_course,
     description,
     kelas,
-    thumbnail) VALUES (${newId},${name_course},${description},${kelas},${thumbnail})
-    RETURNING id,name_course,description,thumbnail,kelas
+    thumbnail,teacher) VALUES (${newId},${name_course},${description},${kelas},${thumbnail},${teacher})
+    RETURNING id,name_course,description,thumbnail,kelas,teacher
     `;
 
     return result[0];
