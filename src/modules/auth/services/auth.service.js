@@ -96,7 +96,7 @@ export const loginUser = async (student_id, password) => {
 };
 
 export const updateUsers = async(student_id,dataBaru) => {
-  const {name,kelas,major,years,valid_thru,role} = dataBaru;
+  const {name,kelas,major,years,valid_thru,role,email} = dataBaru;
 
   const result = await sql`UPDATE "User"
   SET 
@@ -105,10 +105,11 @@ export const updateUsers = async(student_id,dataBaru) => {
     major = ${major},
     years = ${years},
     valid_thru = ${valid_thru},
-    role = ${role}
+    role = ${role},
+    email = ${email}
     WHERE student_id = ${student_id}
     
-    RETURNING id, student_id,name, kelas, major, years ,valid_thru, role`
+    RETURNING id, student_id,name, kelas, major, years ,valid_thru, role,email`
 
     return result.length > 0 ? result[0] : null;
 };
