@@ -19,3 +19,19 @@ export const getAllAnnouncements = async (request, reply) => {
         reply.code(500).send({status: 'error', message: err.message});
     }
 }
+
+export const deleteAnnouncement = async (request, reply) => {
+    try{
+        const { id } = request.params;
+        const result = await service.deleteAnnouncement(id);
+
+        if(!result){
+            reply.code(404).send({status: 'error', message: 'Announcement not found'});
+            return;
+        }
+
+        reply.code(200).send({status: 'success', message: 'Announcement deleted successfully'});
+    }catch(err){
+        reply.code(500).send({status: 'error', message: err.message});
+    }
+}

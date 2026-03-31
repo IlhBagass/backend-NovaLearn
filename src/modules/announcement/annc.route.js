@@ -4,4 +4,6 @@ export default async function (app) {
     app.post('/add', controller.createAnnouncement);
 
     app.get('/show', controller.getAllAnnouncements);
+
+    app.delete('/delete/:id', controller.deleteAnnouncement);
 }
