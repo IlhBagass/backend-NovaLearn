@@ -1,4 +1,4 @@
-import * as service from '../service/annnc.service.js';
+import * as service from '../services/annc.service.js';
 
 export const createAnnouncement = async (request, reply) => {
     try{
