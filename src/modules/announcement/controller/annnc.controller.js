@@ -35,3 +35,14 @@ export const deleteAnnouncement = async (request, reply) => {
         reply.code(500).send({status: 'error', message: err.message});
     }
 }
+
+export const updateAnnouncement = async (request, reply) => {
+    try{
+        const { id } = request.params;
+        const { title, content, is_active, published, expired } = request.body;
+        const result = await service.updateAnnouncement(id, title, content, is_active, published, expired); 
+        reply.code(200).send({status: 'success', data: result});
+    }catch(err){
+        reply.code(500).send({status: 'error', message: err.message});
+    }
+}

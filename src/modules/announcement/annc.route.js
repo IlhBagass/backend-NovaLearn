@@ -6,4 +6,6 @@ export default async function (app) {
     app.get('/show', controller.getAllAnnouncements);
 
     app.delete('/delete/:id', controller.deleteAnnouncement);
+
+    app.put('/update/:id', controller.updateAnnouncement);
 }

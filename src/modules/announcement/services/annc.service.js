@@ -33,3 +33,21 @@ export const deleteAnnouncement = async (id) => {
     `;
     return result[0];
 }
+
+export const updateAnnouncement = async (id, title, content, is_active, published, expired) => {
+    const existingAnnouncement = await sql`
+        SELECT * FROM announcement WHERE id = ${id}
+    `;
+
+    if (existingAnnouncement.length === 0) {
+        throw new Error('Announcement not found');
+    }
+
+    const result = await sql`
+        UPDATE announcement
+        SET title = ${title}, content = ${content}, is_active = ${is_active}, published = ${published}, expired = ${expired}
+        WHERE id = ${id}
+        RETURNING *
+    `;
+    return result[0];
+}
