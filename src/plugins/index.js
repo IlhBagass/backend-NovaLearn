@@ -5,6 +5,7 @@ import authModule from "../modules/auth/index.js";
 import courseModule from "../modules/course/index.js";
 import modulModule from "../modules/modul/index.js";
 import modulQuiz from "../modules/quiz/index.js";
+import anncModule from "../modules/announcement/index.js";
 
 export default async function registerPlugins(app) {
   await app.register(cors, {
@@ -23,4 +24,5 @@ export default async function registerPlugins(app) {
   await app.register(courseModule, { prefix: "/course" });
   await app.register(modulModule, { prefix: "/modul" });
   await app.register(modulQuiz, { prefix: "/quiz" });
+  await app.register(anncModule, { prefix: "/announcement" });
 }

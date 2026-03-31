@@ -1,0 +1,21 @@
+import * as service from '../service/annnc.service.js';
+
+export const createAnnouncement = async (request, reply) => {
+    try{
+        const { title, content, is_active, published, expired } = request.body;
+        const result = await service.createAnnouncement(title, content, is_active, published, expired);
+
+        reply.code(201).send({status: 'success', data: result});
+    }catch(err){
+        reply.code(500).send({status: 'error', message: err.message});
+    }
+}
+
+export const getAllAnnouncements = async (request, reply) => {
+    try{
+        const result = await service.getAllAnnouncements();
+        reply.code(200).send({status: 'success', data: result});
+    }catch(err){
+        reply.code(500).send({status: 'error', message: err.message});
+    }
+}
