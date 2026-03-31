@@ -19,7 +19,7 @@ export const registerUser = async (student_id,admin_id,email ,name, password, ke
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // 3. Generate ID unik
-  const newId = crypto.randomBytes(5).toString('hex');
+  const newId = crypto.randomBytes(5).toString('hex').toUpperCase(); 
   
   const result = await sql`
     INSERT INTO "User" (
@@ -37,7 +37,7 @@ export const registerUser = async (student_id,admin_id,email ,name, password, ke
 export const showUser = async (student_id) => {
   // Hanya ambil kolom yang diperlukan (Tanpa Password)
   const result = await sql`
-    SELECT id, student_id, name, kelas, major, years, valid_thru, role 
+    SELECT id, student_id, name, kelas, major, years, valid_thru, role,email 
     FROM "User" 
     WHERE student_id = ${student_id}
   `;
@@ -48,7 +48,7 @@ export const showUser = async (student_id) => {
 
 export const showAllUser = async () =>{
    const result = await sql `
-   SELECT id, student_id, name, kelas, major, valid_thru, role
+   SELECT id, student_id, name, kelas, major, valid_thru, role,email
    FROM "User"
    ORDER BY "createdAt" DESC`
    
