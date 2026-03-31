@@ -28,7 +28,7 @@ export const registerUser = async (student_id,admin_id,email ,name, password, ke
     VALUES (
       ${newId}, ${student_id},${admin_id} , ${email}, ${name}, ${hashedPassword}, ${kelas}, ${major}, ${years}, ${valid_thru}, ${role}
     )
-    RETURNING id, student_id,admin_id , email, name, kelas, major, years, valid_thru, role
+    RETURNING id, student_id,admin_id , email, name, kelas, major, years, valid_thru, role,years
   `;
 
   return result[0];
@@ -48,7 +48,7 @@ export const showUser = async (student_id) => {
 
 export const showAllUser = async () =>{
    const result = await sql `
-   SELECT id, student_id, name, kelas, major, valid_thru, role,email
+   SELECT id, student_id, name, kelas, major, valid_thru, role,email,years
    FROM "User"
    ORDER BY "createdAt" DESC`
    
