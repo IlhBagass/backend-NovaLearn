@@ -1,9 +1,15 @@
 import cloudinary from '../config/cloudinary.js';
 
-export const uploadImageToCloudinary = (fileStream) => {
+export const uploadFileToCloudinary = (
+    fileStream,
+    { folder = 'novalearn/uploads', resourceType = 'auto' } = {}
+) => {
     return new Promise((resolve, reject) => {
         const upload = cloudinary.uploader.upload_stream(
-            { folder: 'novalearn/courses' }, 
+            {
+                folder,
+                resource_type: resourceType,
+            },
             (error, result) => {
                 if (error) return reject(error);
                 resolve(result);
@@ -12,3 +18,9 @@ export const uploadImageToCloudinary = (fileStream) => {
         fileStream.pipe(upload);
     });
 };
+
+export const uploadImageToCloudinary = (fileStream) =>
+    uploadFileToCloudinary(fileStream, {
+        folder: 'novalearn/courses',
+        resourceType: 'image',
+    });
