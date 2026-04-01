@@ -1,2 +1,0 @@
-ALTER TABLE modul
-ADD COLUMN IF NOT EXISTS link_materi TEXT;
